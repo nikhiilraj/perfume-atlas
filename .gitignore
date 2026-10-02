@@ -1,0 +1,17 @@
+node_modules/
+.next/
+dist/
+build/
+coverage/
+playwright-report/
+test-results/
+.sites-runtime/
+.wrangler/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+work/
+*.tar.gz
+
