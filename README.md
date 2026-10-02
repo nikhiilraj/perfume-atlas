@@ -22,4 +22,3 @@ Read the [build specification](docs/superpowers/specs/2026-10-02-perfume-atlas-d
 Development will use meaningful milestone commits. The repository is intended to remain public. Secrets, personal customer information, and local runtime state must not be committed.
 
 No perfume performance measurements, seller authenticity guarantees, live offer audit, or Jev evaluation are implied by this specification.
-
