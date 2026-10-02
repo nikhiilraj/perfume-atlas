@@ -1,1 +1,6 @@
-import {DiscoveryFlow} from '@/components/discovery-flow';import {getCatalog} from '@/lib/catalog/query';export const metadata={title:'Find my scent'};export default function Page(){return <DiscoveryFlow catalog={getCatalog()}/>;}
+import { DiscoveryFlow } from "@/components/discovery-flow";
+import { getCatalog } from "@/lib/catalog/query";
+export const metadata = { title: "Find my scent" };
+export default function Page() {
+  return <DiscoveryFlow catalog={getCatalog()} />;
+}
