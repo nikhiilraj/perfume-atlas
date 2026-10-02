@@ -30,7 +30,13 @@ export function eligibleCandidates(
       exclusions.push({ variantId: v.id, reason });
       continue;
     }
-    const offer = getComparableOffers(v, c.offers, now).cheapestDelivered;
+    const offer = getComparableOffers(v, c.offers, now)
+      .current.filter((o) => o.shippingInr !== null)
+      .sort(
+        (a, b) =>
+          a.amountInr + a.shippingInr! - (b.amountInr + b.shippingInr!) ||
+          a.id.localeCompare(b.id),
+      )[0];
     let price: number | null = null;
     if (offer) {
       price = offer.amountInr + (offer.shippingInr ?? 0);

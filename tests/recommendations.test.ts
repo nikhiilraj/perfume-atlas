@@ -1,13 +1,40 @@
 import { describe, it, expect } from "vitest";
-import { rankCandidates } from "@/lib/recommendations/baseline";
+import {
+  eligibleCandidates,
+  rankCandidates,
+} from "@/lib/recommendations/baseline";
 import {
   makeCatalog,
   makePreferences,
   makeFragrance,
   makeVariant,
+  makeOffer,
 } from "./fixtures";
 import { getCatalog } from "@/lib/catalog/query";
 describe("recommendation constraints", () => {
+  it("retains a known delivered budget match alongside unknown shipping", () => {
+    const now = new Date("2026-10-02T01:00:00Z");
+    const c = makeCatalog({
+      offers: [
+        makeOffer({ id: "complete", amountInr: 3000, shippingInr: 100 }),
+        makeOffer({ id: "unknown", amountInr: 2900, shippingInr: null }),
+      ],
+    });
+    const r = eligibleCandidates(
+      c,
+      makePreferences({ budgetMode: "observed-only", maxBudgetInr: 3500 }),
+      now,
+    );
+    expect(r.eligible).toHaveLength(1);
+    expect(r.eligible[0].budgetEvidence).toBe("observed");
+    expect(
+      eligibleCandidates(
+        c,
+        makePreferences({ budgetMode: "observed-only", maxBudgetInr: 3000 }),
+        now,
+      ).eligible,
+    ).toHaveLength(0);
+  });
   it("never exceeds a reference budget", () => {
     const r = rankCandidates(
       makeCatalog(),

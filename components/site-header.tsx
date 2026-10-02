@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { Compass, FlaskConical, Layers3, Bookmark } from "lucide-react";
 export function SiteHeader() {
   return (

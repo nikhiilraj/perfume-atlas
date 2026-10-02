@@ -40,7 +40,7 @@ The [official TypeSafe API contract](https://docs.typesafe.ai/api) was checked 2
 
 ## Shelf and privacy
 
-`perfume-atlas:shelf:v1` stores favorites, tried status, reactions and notes in `localStorage`. The shelf is browser-local, never synced or sent to Jev. Storage failure is visible and is never reported as a successful save. Clearing the shelf removes only this key. Consultation answers are transient; comparison URLs contain variant IDs only.
+`perfume-atlas:shelf:v1` stores favorites, tried status, reactions and notes in `localStorage`. The shelf is browser-local, with cross-tab updates and fresh-storage mutation merges; it is never synced across devices or sent to Jev. Local editorial overlap highlights shared traits and scent families without clone claims. Storage failure is visible and is never reported as a successful save. Clearing the shelf removes only this key. Consultation answers are transient; comparison URLs contain variant IDs only.
 
 ## Imagery and publication
 

@@ -1,4 +1,48 @@
 import { test, expect } from "@playwright/test";
+for (const [name, payload] of [
+  ["missing fields", { candidates: [], method: "rules" }],
+  [
+    "unknown identity",
+    {
+      candidates: [
+        {
+          variantId: "missing",
+          fragranceId: "missing",
+          score: 1,
+          reasonCodes: [],
+          caveats: [],
+          budgetEvidence: "unknown",
+        },
+      ],
+      exclusions: [],
+      noMatchReason: null,
+      method: "jev",
+    },
+  ],
+  [
+    "missing candidate fields",
+    {
+      candidates: [
+        { variantId: "liquid-brun-100", fragranceId: "liquid-brun" },
+      ],
+      exclusions: [],
+      noMatchReason: null,
+      method: "rules",
+    },
+  ],
+] as const) {
+  test(`malformed recommendation ${name} returns the rules shortlist`, async ({
+    page,
+  }) => {
+    await page.route("**/api/recommend", (route) =>
+      route.fulfill({ json: payload }),
+    );
+    await page.goto("/discover");
+    await page.getByRole("button", { name: "Build my shortlist" }).click();
+    await expect(page.getByText("Rules-based matching")).toBeVisible();
+    await expect(page.getByTestId("recommendation-card")).toHaveCount(3);
+  });
+}
 test("consultation produces explained results and a profile route", async ({
   page,
 }) => {

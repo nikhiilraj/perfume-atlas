@@ -1,7 +1,7 @@
 "use client";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import {
   ArrowLeft,
   ArrowUpRight,
@@ -18,14 +18,16 @@ export type PerfumeDetailProps = {
   fragrance: Fragrance;
   variants: Variant[];
   catalog: Catalog;
+  initialVariantId: string;
 };
 export function PerfumeDetail({
   fragrance: f,
   variants,
   catalog,
+  initialVariantId,
 }: PerfumeDetailProps) {
   const hydrated = useHydrated();
-  const [variantId, setVariant] = useState(variants[0].id);
+  const [variantId, setVariant] = useState(initialVariantId);
   const v = variants.find((x) => x.id === variantId)!;
   const offers = getComparableOffers(v, catalog.offers, new Date());
   const sources = catalog.sources.filter(
@@ -54,7 +56,14 @@ export function PerfumeDetail({
               disabled={!hydrated}
               aria-label="Exact variant"
               value={variantId}
-              onChange={(e) => setVariant(e.target.value)}
+              onChange={(e) => {
+                setVariant(e.target.value);
+                window.history.replaceState(
+                  null,
+                  "",
+                  "?variant=" + e.target.value,
+                );
+              }}
             >
               {variants.map((x) => (
                 <option value={x.id} key={x.id}>

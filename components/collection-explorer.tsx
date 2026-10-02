@@ -1,7 +1,7 @@
 "use client";
 import { useHydrated } from "@/hooks/use-hydrated";
 import { useMemo, useState } from "react";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import {
   ArrowUpRight,
   Search,

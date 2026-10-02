@@ -1,4 +1,29 @@
 import { test, expect } from "@playwright/test";
+test("comparison controls add and remove editions", async ({ page }) => {
+  await page.goto("/compare");
+  await page.getByLabel("Add an exact variant").selectOption("liquid-brun-100");
+  await page.getByRole("button", { name: "Add to compare" }).click();
+  await expect(page.getByTestId("comparison-product")).toHaveCount(1);
+  await page.getByRole("button", { name: /Remove Liquid Brun/ }).click();
+  await expect(page.getByTestId("comparison-product")).toHaveCount(0);
+});
+test("comparison preserves the exact edition across a profile round trip", async ({
+  page,
+}) => {
+  await page.goto("/compare?ids=cdn-intense-le-105");
+  await page.getByRole("link", { name: "Explore profile" }).click();
+  await expect(page.getByLabel("Exact variant")).toHaveValue(
+    "cdn-intense-le-105",
+  );
+  await expect(page.getByTestId("variant-identity")).toContainText(
+    "conflicted",
+  );
+  await page.getByRole("link", { name: "Compare this edition" }).click();
+  await expect(page).toHaveURL(/ids=cdn-intense-le-105/);
+  await expect(page.getByTestId("comparison-product")).toContainText(
+    "Limited Edition",
+  );
+});
 test("a profile has sourced notes and honest performance evidence", async ({
   page,
 }) => {

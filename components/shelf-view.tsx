@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { ArrowUpRight, Bookmark, Trash2 } from "lucide-react";
 import type { Catalog } from "@/lib/catalog/types";
 import {
   readShelf,
   writeShelf,
   resetShelf,
+  SHELF_KEY,
   type ShelfState,
   type ShelfEntry,
 } from "@/lib/shelf/storage";
@@ -26,8 +27,9 @@ function ShelfCard({
   const f = catalog.fragrances.find((f) => f.id === entry.fragranceId)!;
   const [draft, setDraft] = useState(entry);
   const [dirty, setDirty] = useState(false);
+  const value = dirty ? draft : entry;
   const change = <K extends keyof ShelfEntry>(key: K, value: ShelfEntry[K]) => {
-    setDraft((d) => ({ ...d, [key]: value }));
+    setDraft((d) => ({ ...(dirty ? d : entry), [key]: value }));
     setDirty(true);
   };
   return (
@@ -54,7 +56,7 @@ function ShelfCard({
           <label className="field-label">
             Trial status
             <select
-              value={draft.trialStatus}
+              value={value.trialStatus}
               onChange={(e) =>
                 change(
                   "trialStatus",
@@ -69,7 +71,7 @@ function ShelfCard({
           <label className="field-label">
             Reaction to {f.name}
             <select
-              value={draft.reaction}
+              value={value.reaction}
               onChange={(e) =>
                 change("reaction", e.target.value as ShelfEntry["reaction"])
               }
@@ -84,7 +86,7 @@ function ShelfCard({
         <label className="favorite-field">
           <input
             type="checkbox"
-            checked={draft.favorite}
+            checked={value.favorite}
             onChange={(e) => change("favorite", e.target.checked)}
           />{" "}
           A favorite
@@ -93,9 +95,9 @@ function ShelfCard({
           My note for {f.name}
           <textarea
             maxLength={2000}
-            value={draft.note}
+            value={value.note}
             onChange={(e) => change("note", e.target.value)}
-            placeholder="How did it feel on your skin? Where would you wear it?"
+            placeholder="Which traits did you like or dislike? How did it wear on your skin?"
           />
         </label>
         <div className="shelf-card-actions">
@@ -103,7 +105,7 @@ function ShelfCard({
             className="button"
             aria-label={"Save notes for " + f.name}
             onClick={() => {
-              if (onSave({ ...draft, updatedAt: new Date().toISOString() }))
+              if (onSave({ ...value, updatedAt: new Date().toISOString() }))
                 setDirty(false);
             }}
           >
@@ -130,6 +132,7 @@ export function ShelfView({
   const [loaded, setLoaded] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [overlapId, setOverlapId] = useState("");
   useEffect(() => {
     let cancelled = false;
     Promise.resolve().then(() => {
@@ -175,8 +178,27 @@ export function ShelfView({
       cancelled = true;
     };
   }, [catalog, addId, router]);
-  const save = (next: ShelfState) => {
+  useEffect(() => {
+    const refresh = (event: StorageEvent) => {
+      if (event.key !== SHELF_KEY && event.key !== null) return;
+      const next = readShelf(
+        window.localStorage,
+        new Set(catalog.fragrances.map((f) => f.id)),
+      );
+      setShelf(next);
+      setError(next.warning ?? "");
+    };
+    window.addEventListener("storage", refresh);
+    return () => window.removeEventListener("storage", refresh);
+  }, [catalog]);
+  const save = (mutate: (entries: ShelfEntry[]) => ShelfEntry[]) => {
     try {
+      // Merge against storage at the moment of the action, not a stale tab snapshot.
+      const latest = readShelf(
+        window.localStorage,
+        new Set(catalog.fragrances.map((f) => f.id)),
+      );
+      const next: ShelfState = { version: 1, entries: mutate(latest.entries) };
       writeShelf(window.localStorage, next);
       setShelf(next);
       setError("");
@@ -222,8 +244,8 @@ export function ShelfView({
         </button>
       </div>
       <p className="shelf-privacy">
-        Stored only in this browser. No account, no sync. Clearing browser data
-        removes this shelf. Your notes are never sent to Jev.
+        Stored only in this browser. No account or sync across devices. Clearing
+        browser data removes this shelf. Your notes are never sent to Jev.
       </p>
       <div role="status" className="save-status">
         {message}
@@ -254,24 +276,92 @@ export function ShelfView({
               entry={entry}
               catalog={catalog}
               onSave={(value) =>
-                save({
-                  version: 1,
-                  entries: shelf.entries.map((e) =>
+                save((entries) => {
+                  if (!entries.some((e) => e.fragranceId === value.fragranceId))
+                    throw Error("Removed in another tab");
+                  return entries.map((e) =>
                     e.fragranceId === value.fragranceId ? value : e,
-                  ),
+                  );
                 })
               }
               onRemove={() =>
-                save({
-                  version: 1,
-                  entries: shelf.entries.filter(
-                    (e) => e.fragranceId !== entry.fragranceId,
-                  ),
-                })
+                save((entries) =>
+                  entries.filter((e) => e.fragranceId !== entry.fragranceId),
+                )
               }
             />
           ))}
         </div>
+      )}
+      {loaded && shelf.entries.length > 0 && (
+        <section
+          className="guide-callout shelf-overlap"
+          data-testid="shelf-overlap"
+        >
+          <div>
+            <p className="eyebrow">WHAT WOULD THIS ADD?</p>
+            <h2>A new direction for your shelf.</h2>
+            <label className="field-label">
+              Compare a scent with my shelf
+              <select
+                value={overlapId}
+                onChange={(e) => setOverlapId(e.target.value)}
+              >
+                <option value="">Choose a scent to explore</option>
+                {catalog.fragrances
+                  .filter(
+                    (f) => !shelf.entries.some((e) => e.fragranceId === f.id),
+                  )
+                  .map((f) => (
+                    <option key={f.id} value={f.id}>
+                      {f.name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+            <p className="caption">
+              Editorial inference from advertised notes and scent directions.
+              Shared traits do not establish a clone or predict how either
+              perfume wears.
+            </p>
+            {(() => {
+              const candidate = catalog.fragrances.find(
+                (f) => f.id === overlapId,
+              );
+              if (!candidate) return null;
+              return (
+                <ul>
+                  {shelf.entries.map((entry) => {
+                    const saved = catalog.fragrances.find(
+                      (f) => f.id === entry.fragranceId,
+                    )!;
+                    const shared = Object.entries(candidate.profile.traits)
+                      .filter(
+                        ([trait, level]) =>
+                          level >= 3 &&
+                          (saved.profile.traits[
+                            trait as keyof typeof saved.profile.traits
+                          ] ?? 0) >= 3,
+                      )
+                      .map(([trait]) => trait);
+                    return (
+                      <li key={saved.id}>
+                        <strong>{saved.name}</strong>:{" "}
+                        {shared.length
+                          ? `shares a ${shared.join(", ")} direction`
+                          : "no prominent shared traits in this catalog"}
+                        .{" "}
+                        {saved.profile.family === candidate.profile.family
+                          ? "Same editorial scent family."
+                          : "Different editorial scent families."}
+                      </li>
+                    );
+                  })}
+                </ul>
+              );
+            })()}
+          </div>
+        </section>
       )}
     </main>
   );

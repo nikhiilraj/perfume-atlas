@@ -2,7 +2,7 @@
 import { useHydrated } from "@/hooks/use-hydrated";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import { Plus, X, ArrowUpRight } from "lucide-react";
 import type { Catalog } from "@/lib/catalog/types";
 import { formatInr } from "@/lib/catalog/query";
@@ -166,7 +166,7 @@ export function ComparisonView({
                   </dl>
                   <Link
                     className="button secondary"
-                    href={"/perfumes/" + f.slug}
+                    href={"/perfumes/" + f.slug + "?variant=" + v.id}
                   >
                     Explore profile <ArrowUpRight size={16} />
                   </Link>

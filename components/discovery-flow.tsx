@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import Link from "next/link";
+import Link from "@/components/site-link";
 import {
   ArrowRight,
   ArrowUpRight,
@@ -16,6 +16,7 @@ import {
   type RecommendationResult,
 } from "@/lib/recommendations/types";
 import { rankCandidates } from "@/lib/recommendations/baseline";
+import { parseRecommendationResponse } from "@/lib/recommendations/response";
 import { explainRecommendation } from "@/lib/recommendations/explain";
 import { formatInr } from "@/lib/catalog/query";
 import { ScentArt } from "./scent-art";
@@ -50,13 +51,7 @@ export function DiscoveryFlow({ catalog }: { catalog: Catalog }) {
         signal: AbortSignal.timeout(5000),
       });
       if (!response.ok) throw Error("Unavailable");
-      const data: RecommendationResult = await response.json();
-      if (
-        !Array.isArray(data.candidates) ||
-        !["rules", "jev"].includes(data.method)
-      )
-        throw Error("Invalid response");
-      setResult(data);
+      setResult(parseRecommendationResponse(await response.json(), catalog, p));
     } catch {
       setResult(rankCandidates(catalog, p));
     } finally {
@@ -136,7 +131,10 @@ export function DiscoveryFlow({ catalog }: { catalog: Catalog }) {
                           ? "Budget evidence: observed delivered offer"
                           : "Price unknown · no budget fit established"}
                     </div>
-                    <Link className="button" href={"/perfumes/" + f.slug}>
+                    <Link
+                      className="button"
+                      href={"/perfumes/" + f.slug + "?variant=" + v.id}
+                    >
                       Explore profile <ArrowUpRight size={17} />
                     </Link>
                   </div>
