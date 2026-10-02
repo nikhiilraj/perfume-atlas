@@ -4,7 +4,7 @@ An independent perfume guide for India: explore scent character, find a suitable
 
 ## Project status
 
-Design approved in principle; the written implementation specification is ready for review. Application implementation has not started.
+The written build specification is approved. The implementation plan is ready for review. Application implementation has not started.
 
 ## Planned first release
 
@@ -16,6 +16,8 @@ Design approved in principle; the written implementation specification is ready 
 - Responsive, keyboard-accessible browsing with reduced-motion and graphics fallbacks.
 
 Read the [build specification](docs/superpowers/specs/2026-10-02-perfume-atlas-design.md).
+
+The [implementation plan](docs/superpowers/plans/2026-10-02-perfume-atlas.md) defines the application modules, meaningful checks and Git milestones.
 
 ## History and publication
 

@@ -2,7 +2,7 @@
 
 Date: 2 October 2026
 
-Status: ready for written-spec review. Product direction approved in principle. This document specifies the first implementation; it does not describe a completed application.
+Status: approved by the user on 2 October 2026. This document specifies the first implementation; it does not describe a completed application.
 
 ## 1. Agreed purpose and success
 
