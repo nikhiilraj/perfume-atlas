@@ -11,7 +11,9 @@ Checked 2 October 2026, Node 22.21.1, macOS. This record distinguishes implement
 - `npm run build`: passes; all six route patterns and the recommendation API compile to Cloudflare-compatible output. The lazy Three.js chunk triggers a size warning; it is not needed for first product content.
 - Independent review: no Critical findings; five Important findings fixed with RED→GREEN regressions. See `docs/REVIEW.md`.
 - Updated local production worker: all 19 browser flows pass, including exact-edition round trips, cross-tab storage, malformed-response fallback and editorial overlap.
-- The initial tracked clean checkout installed and built successfully. The final reviewed snapshot is checked again before packaging.
+- Clean tracked checkout (`/tmp/perfume-atlas-clean-release`): install, typecheck, lint, 32 tests and production build pass. Repeated on reviewed snapshot `2dd4b29` with Node 22.21.1; no secret or untracked media was required.
+- Public GitHub visibility and remote SHA verified after pushing `2dd4b29`; heuristic credential-shaped history scan found no matches.
+- Updated desktop/mobile screenshots and a recorded sculpture-click camera transition were captured from the production worker; the moving and settled frames were visually inspected. No full mobile-device performance evaluation was performed.
 
 ## Product evidence boundaries
 
