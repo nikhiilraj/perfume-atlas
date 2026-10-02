@@ -62,3 +62,7 @@ next-env.d.ts
 /work/
 
 .superpowers/
+
+*.tsbuildinfo
+playwright-report/
+test-results/
