@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useHydrated } from "@/hooks/use-hydrated";
 import type { Fragrance } from "@/lib/catalog/types";
 export type BoutiqueProps = {
   items: Fragrance[];
@@ -13,6 +14,7 @@ export function Boutique({
   onSelect,
   reducedMotion = false,
 }: BoutiqueProps) {
+  const hydrated = useHydrated();
   const host = useRef<HTMLDivElement>(null);
   const scene = useRef<{
     focus: (id: string) => void;
@@ -70,6 +72,7 @@ export function Boutique({
         <button
           type="button"
           className="scene-toggle"
+          disabled={!hydrated}
           onClick={() => setSimple(!simple)}
           aria-pressed={simple}
         >

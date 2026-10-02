@@ -169,6 +169,52 @@ export function PerfumeDetail({
             </p>
           </div>
         </div>
+        {offers.current.length > 0 && (
+          <div className="observed-offers">
+            {offers.current.map((o) => (
+              <a
+                href={o.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="observed-offer"
+                key={o.id}
+              >
+                <strong>
+                  {catalog.sellers.find((s) => s.id === o.sellerId)?.name ??
+                    "Unverified seller"}
+                </strong>
+                <span>
+                  {formatInr(o.amountInr)} bottle ·{" "}
+                  {o.shippingInr === null
+                    ? "shipping unknown"
+                    : formatInr(o.shippingInr) + " shipping"}
+                </span>
+                <small>
+                  In stock when observed · {o.observedAt} · seller authorization
+                  must be checked
+                </small>
+                <ArrowUpRight size={18} />
+              </a>
+            ))}
+          </div>
+        )}
+        {offers.historical.length > 0 && (
+          <details className="historical-offers">
+            <summary>
+              Earlier or unavailable observations ({offers.historical.length})
+            </summary>
+            <p className="caption">
+              Excluded from the current cheapest comparison.
+            </p>
+            {offers.historical.map((o) => (
+              <p key={o.id}>
+                {catalog.sellers.find((s) => s.id === o.sellerId)?.name ??
+                  "Unverified seller"}{" "}
+                · {formatInr(o.amountInr)} · {o.stock} · {o.observedAt}
+              </p>
+            ))}
+          </details>
+        )}
         <div className="seller-grid">
           {catalog.sellers.map((s) => (
             <a

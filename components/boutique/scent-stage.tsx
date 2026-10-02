@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
+import { useHydrated } from "@/hooks/use-hydrated";
 import type { Fragrance } from "@/lib/catalog/types";
 import { ScentArt } from "../scent-art";
 const phases = ["Opening", "Character", "Drydown"] as const;
 export function ScentStage({ fragrance: f }: { fragrance: Fragrance }) {
+  const hydrated = useHydrated();
   const [phase, setPhase] = useState(0);
   return (
     <section className="scent-stage">
@@ -17,6 +19,7 @@ export function ScentStage({ fragrance: f }: { fragrance: Fragrance }) {
         <div className="phase-tabs" aria-label="Scent phase">
           {phases.map((p, i) => (
             <button
+              disabled={!hydrated}
               key={p}
               onClick={() => setPhase(i)}
               aria-pressed={phase === i}

@@ -1662,3 +1662,61 @@ textarea {
     gap: 15px;
   }
 }
+/* Text enlargement keeps controls and long scent names readable. */
+.page h1,
+.page h2,
+.page h3,
+.wordmark {
+  overflow-wrap: anywhere;
+}
+.button {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.guide-callout .button {
+  white-space: normal;
+}
+.scene-topline {
+  flex-wrap: wrap;
+}
+.site-header nav {
+  min-width: 0;
+}
+.observed-offers {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0;
+}
+.observed-offer {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--line);
+  padding: 18px;
+}
+.observed-offer small {
+  grid-column: 1/3;
+  font-size: 12px;
+  color: var(--muted);
+}
+.historical-offers {
+  margin: 20px 0;
+}
+.historical-offers summary {
+  font-size: 16px;
+  cursor: pointer;
+}
+.historical-offers p {
+  margin: 12px 0;
+}
+@media (max-width: 700px) {
+  .observed-offer {
+    grid-template-columns: 1fr;
+  }
+  .observed-offer small {
+    grid-column: 1;
+  }
+}

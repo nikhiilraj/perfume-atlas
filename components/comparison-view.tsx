@@ -95,6 +95,7 @@ export function ComparisonView({
                   <ScentArt color={f.profile.color} />
                   <button
                     className="remove-button"
+                    disabled={!hydrated}
                     aria-label={"Remove " + f.name + " " + v.edition}
                     onClick={() =>
                       update(selectedVariantIds.filter((id) => id !== v.id))

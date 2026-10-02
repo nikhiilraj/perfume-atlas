@@ -98,6 +98,7 @@ export function CollectionExplorer({ catalog }: { catalog: Catalog }) {
         {families.map((x) => (
           <button
             type="button"
+            disabled={!hydrated}
             key={x}
             aria-pressed={family === x}
             onClick={() => setFamily(x)}
@@ -183,10 +184,23 @@ export function CollectionExplorer({ catalog }: { catalog: Catalog }) {
           >
             <button
               type="button"
+              disabled={!hydrated}
               className="card-explore"
               aria-label={"Explore " + f.name}
               aria-pressed={f.id === selected?.id}
-              onClick={() => setSelected(f.id)}
+              onClick={() => {
+                setSelected(f.id);
+                document
+                  .querySelector(".gallery-layout")
+                  ?.scrollIntoView({
+                    behavior: window.matchMedia(
+                      "(prefers-reduced-motion: reduce)",
+                    ).matches
+                      ? "instant"
+                      : "smooth",
+                    block: "center",
+                  });
+              }}
             >
               <div className="card-art">
                 <span>{String(i + 1).padStart(2, "0")}</span>
