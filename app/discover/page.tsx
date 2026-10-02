@@ -1,1 +1,1 @@
-export default function Page(){return <main id="main" className="page"><h1>Find my scent</h1><p>This collection is taking shape.</p></main>;}
+import {DiscoveryFlow} from '@/components/discovery-flow';import {getCatalog} from '@/lib/catalog/query';export const metadata={title:'Find my scent'};export default function Page(){return <DiscoveryFlow catalog={getCatalog()}/>;}
