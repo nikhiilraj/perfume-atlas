@@ -1,2 +1,2 @@
-import Link from 'next/link';
-export default function Home() { return <main id="main" className="page"><p className="eyebrow">THE INDEPENDENT SCENT LIBRARY</p><h1>Find a scent<br/><em>that feels like you.</em></h1><p>Explore the collection, understand its character, and find your fit.</p><div className="actions"><Link className="button" href="/discover">Find my scent</Link><Link className="button secondary" href="/compare">Compare perfumes</Link></div></main>; }
+import {CollectionExplorer} from '@/components/collection-explorer';import {getCatalog} from '@/lib/catalog/query';
+export default function Page(){return <CollectionExplorer catalog={getCatalog()}/>;}
